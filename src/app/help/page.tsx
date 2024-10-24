@@ -27,12 +27,12 @@ const HelpAndSupport = () => {
           <h2 className="text-3xl font-bold text-gray-300 mb-6 mt-6">Help & Support</h2>
 
           {/* FAQs Section */}
-          <div className="space-y-2">
+          <div className="space-y-6">
             <details className="bg-white p-4 rounded-md shadow">
               <summary className="text-gray-300 font-semibold cursor-pointer">
                 How do I invite a teammate?
               </summary>
-              <p className="mt-2 text-gray-600">
+              <p className="mt-4 text-gray-600">
                 You can invite teammates to Linear by navigating to the team settings and clicking
                 on the &quotes;Invite teammates&quotes; button. From there, you can enter their email address and
                 send them an invitation.
@@ -40,7 +40,7 @@ const HelpAndSupport = () => {
             </details>
             <details className="bg-white p-4 rounded-md shadow">
               <summary className="font-semibold cursor-pointer text-gray-300">Can I delete an issue?</summary>
-              <p className="mt-2 text-gray-600">
+              <p className="mt-4 text-gray-600 ">
                 You can invite teammates to Linear by navigating to the team settings and clicking
                 on the &quotes;Invite teammates&quotes; button. From there, you can enter their email address and
                 send them an invitation.
@@ -48,7 +48,7 @@ const HelpAndSupport = () => {
             </details>
             <details className="bg-white p-4 rounded-md shadow">
               <summary className="font-semibold cursor-pointer text-gray-300">What are issue views?</summary>
-              <p className="mt-2 text-gray-600">
+              <p className="mt-4 text-gray-600">
                 You can invite teammates to Linear by navigating to the team settings and clicking
                 on the &quotes;Invite teammates&quotes; button. From there, you can enter their email address and
                 send them an invitation.
@@ -57,9 +57,9 @@ const HelpAndSupport = () => {
           </div>
 
           {/* Support Request Form */}
-          <div className="mt-6">
+          <div className="mt-10">
             <h3 className="text-2xl mb-8 mt-6 font-bold text-gray-300">Submit a support request</h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 mt-4">
               If you need help with something that isn&apos;t covered in our FAQs, you can submit a
               support request here.
             </p>
@@ -75,9 +75,9 @@ const HelpAndSupport = () => {
 
         {/* Sidebar Section */}
         <aside className="w-1/3 pl-8">
-          <div className="bg-white p-4 rounded-md shadow mb-4">
+          <div className="bg-white p-4 rounded-md flex flex-col gap-4 shadow mb-4">
             <h4 className="font-bold mb-2">Contact us</h4>
-            <p className="text-gray-600 flex items-center">
+            <p className="text-gray-600 flex  items-center">
               <svg
                 className="w-6 h-6 mr-2"
                 fill="currentColor"
@@ -101,7 +101,7 @@ const HelpAndSupport = () => {
             </p>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-4 mt-12">
             <button className="bg-blue-600 text-white px-4 py-2 w-full rounded-md">
               New Issue
             </button>

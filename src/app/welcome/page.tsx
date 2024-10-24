@@ -152,7 +152,7 @@ getUser();
                 <div>
                     <button
                 onClick={handleLogout}
-                className="bg-blue-500 px-8 py-2 rounded-md font-medium"
+                className="bg-blue-500 text-white px-8 py-2 rounded-md font-medium"
               >
                 Logout
               </button>
