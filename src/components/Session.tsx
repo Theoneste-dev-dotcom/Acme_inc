@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useLoginContext } from "@/context";
@@ -12,7 +12,7 @@ import defaultProfile from '../images/user.png'
 
 export default function MySession() {
   const [show, setShow] = useState(false)
-  const {data:session, status} = useSession();
+  const {data:session} = useSession();
   const [userAgent, setUserAgent] = useState({
     email:session?.user?.email,
     password:"",
@@ -71,7 +71,7 @@ export default function MySession() {
       </div>
       {isLoggedIn ? (
      <div>
-      <h1 className="text-gray-700 text-sm">you can't make any transaction unless you create an accout?</h1>
+      <h1 className="text-gray-700 text-sm">you cant make any transaction unless you create an accout?</h1>
       <div className={`${show && 'flex-col'} flex flex-row gap-2 my-4`}>
   {!show && !isLoggedIn && (
         <button

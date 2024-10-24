@@ -1,18 +1,48 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Toaster, toast } from 'sonner';
 
+interface UsersType  {
+  name:string,
+  role:string,
+  email:string,
+  status:string
+}
 const UsersTable = () => {
-  const [users, setUsers] = useState([
+  const [users, setUsers] = useState <UsersType[]>([
     { name: 'Alice Smith', role: 'Admin', email: 'alice.smith@email.com', status: 'Active' },
     { name: 'Bob Johnson', role: 'Editor', email: 'bob.johnson@email.com', status: 'Active' },
     { name: 'Charlie Brown', role: 'Viewer', email: 'charlie.brown@email.com', status: 'Invited' },
   ]);
+useEffect(() => {
+  axios.get("http://localhost:8005/api/users/all", {
+    headers:{
+      Authorization:`Bearer ${localStorage.getItem("authToken")}`,
+      "Content-Type": "application/json",
+    }
+  })
+  .then((res) => {
+    alert(res.status)
+    console.log(res.status);
+    setUsers([...res.data, {...users}])
+    toast(res.status)
+})
+.catch(error=> {
+  console.log(error);
+}
+)
 
-  const handleDelete = (email) => {
+
+}, [])
+
+
+
+  const handleDelete = (email:string) => {
     setUsers(users.filter(user => user.email !== email));
   };
 
-  const handleResendInvite = (email) => {
+  const handleResendInvite = (email:string) => {
     alert(`Resent invite to ${email}`);
   };
 
@@ -27,7 +57,7 @@ const UsersTable = () => {
       </div>
       <table className="w-full table-auto">
         <thead>
-          <tr className="bg-gray-300 text-left">
+          <tr className="bg-gray-400 text-left">
             <th className="p-4">Name</th>
             <th className="p-4">Role</th>
             <th className="p-4">Email</th>
@@ -38,20 +68,20 @@ const UsersTable = () => {
         <tbody>
           {users.map((user, index) => (
             <tr key={index} className="border-b">
-              <td className="p-4 text-gray-300">{user.name}</td>
+              <td className="p-4 text-gray-400">{user.name}</td>
               <td className="p-4">
-                <span className={`px-3 py-1 rounded-full text-white ${
+                <span className={`px-6 py-2 rounded-full text-white ${
                   user.role === 'Admin'
                     ? 'bg-blue-500'
                     : user.role === 'Editor'
-                    ? 'bg-yellow-500'
-                    : 'bg-green-500'
+                    ? 'bg-yellow-300'
+                    : 'bg-green-300'
                 }`}>
                   {user.role}
                 </span>
               </td>
-              <td className="p-4 text-gray-300">{user.email}</td>
-              <td className="p-4 text-gray-300">{user.status}</td>
+              <td className="p-4 text-gray-400">{user.email}</td>
+              <td className="p-4 text-gray-400">{user.status}</td>
               <td className="p-4">
                 {user.status === 'Invited' ? (
                   <button
@@ -78,6 +108,7 @@ const UsersTable = () => {
         <span className="px-3 py-2">1</span>
         <button className="px-3 py-2 border border-gray-300 rounded-lg mx-1">{'>'}</button>
       </div>
+      <Toaster/>
     </div>
   );
 };
