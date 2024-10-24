@@ -1,5 +1,5 @@
 "use client"
-
+import Sidebar from '@/components/users/Sidebar';
 import React, { useState } from 'react';
 
 const PermissionsManagement = () => {
@@ -28,15 +28,17 @@ const PermissionsManagement = () => {
   };
 
   return (
-    <div className="p-6 bg-white shadow-md rounded-lg">
-      <h2 className="text-2xl font-bold mb-4">Manage User Permissions</h2>
+   <div className='flex flex-row bg-gray-50 w-[100vw] h-[100vh]'>
+    <Sidebar/>
+     <div className="p-6  shadow-md rounded-lg flex-1">
+      <h2 className="text-2xl font-bold mb-4 text-gray-600">Manage User Permissions</h2>
 
       <div className="mb-4">
         <select
           onChange={(e) => setSelectedUser(users.find(user => user.email === e.target.value))}
           className="w-full p-2 border border-gray-300 rounded-lg"
         >
-          <option value="">Select a user</option>
+          <option value="" className='text-gray-400'>Select a user</option>
           {users.map((user, index) => (
             <option key={index} value={user.email}>{user.name}</option>
           ))}
@@ -78,6 +80,7 @@ const PermissionsManagement = () => {
         </div>
       )}
     </div>
+   </div>
   );
 };
 

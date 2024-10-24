@@ -51,7 +51,10 @@ const AppWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       )
 
       if(res) {
-      setId(res.data.id)
+        console.log(res.data.id, "index")
+        setId(res.data.id)
+      } else {
+        console.log("no id got")
       }
     }
     getData();

@@ -1,4 +1,5 @@
 "use client"
+import Sidebar from '@/components/users/Sidebar';
 import React, { useState } from 'react';
 
 const RolesManagement = () => {
@@ -27,7 +28,9 @@ const RolesManagement = () => {
   };
 
   return (
-    <div className='w-[100vw] h-[100vh] bg-gray-300 '>
+    <div className='flex flex-row'>
+      <Sidebar/>
+      <div className='h-[100vh] bg-gray-300 flex-1 '>
           <div className="p-6 bg-white shadow-md rounded-lg">
       <h2 className="text-2xl font-bold mb-4">Manage User Roles</h2>
       
@@ -77,6 +80,7 @@ const RolesManagement = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
     </div>
   );

@@ -1,10 +1,11 @@
 "use client";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useActiveUserContext } from "@/context";
 import { Toaster, toast } from "sonner";
-
 const UserForm = () => {
+    const router = useRouter()
   // Initial state for the form
   const { id } = useActiveUserContext();
   const [user, setUser] = useState({
@@ -13,19 +14,15 @@ const UserForm = () => {
     email: "",
     status: "",
     permissions: "",
-    ownerId: 0,
+    ownerId: id,
   });
 
-  useEffect(() => {
-    if (id) {
-      setUser({ ...user, ownerId: id });
-    }
-  }, []);
-
   // Handle form submission
+ 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (user.email != "" && user.name != "" && user.ownerId!=0) {
+    
+    if (user.email != "" && user.name != "" && user.ownerId !=0) {
       console.log("User added:", user);
       axios
         .post("http://localhost:8005/api/users/add", user, {
@@ -42,12 +39,16 @@ const UserForm = () => {
             name: "",
             email: "",         
           }));
+          router.push('/users')
         })
         .catch((error) => {
           console.log(error);
         });
     } else {
-        toast.warning("please fill out all field")
+        if(user.ownerId != 0){
+            toast.error("You have Active user id")
+        }
+        toast.warning(`Please fill all the fields ${user.ownerId}`)
     }
   };
 
@@ -88,6 +89,7 @@ const UserForm = () => {
             onChange={handleChange}
             required
           >
+            <option value=""></option>
             <option value="Viewer">Viewer</option>
             <option value="Admin">Admin</option>
             <option value="Editor">Editor</option>
@@ -113,6 +115,7 @@ const UserForm = () => {
             onChange={handleChange}
             required
           >
+            <option value=""></option>
             <option value="Active">Active</option>
             <option value="Invited">Invited</option>
             <option value="Inactive">Inactive</option>
@@ -129,6 +132,7 @@ const UserForm = () => {
             onChange={handleChange}
             required
           >
+            <option value=""></option>
             <option value="Active">Read</option>
             <option value="Invited">Update</option>
             <option value="Inactive">Other</option>

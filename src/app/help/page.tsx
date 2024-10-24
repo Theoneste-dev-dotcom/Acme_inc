@@ -1,8 +1,12 @@
 import React from 'react';
+import Sidebar from '@/components/users/Sidebar';
 
 const HelpAndSupport = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+  <div className='flex flex-row '>
+
+    <Sidebar/>
+      <div className="min-h-screen bg-gray-50 flex-1">
       {/* Header Section */}
       <header className="bg-white shadow-sm sticky top-0">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
@@ -134,6 +138,7 @@ const HelpAndSupport = () => {
         </div>
       </footer>
     </div>
+  </div>
   );
 };
 

@@ -2,44 +2,52 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Toaster, toast } from 'sonner';
-
+import { useActiveUserContext } from '@/context';
+import { useLoginContext } from '@/context';
 interface UsersType  {
+  id:number
   name:string,
   role:string,
   email:string,
   status:string
 }
 const UsersTable = () => {
-  const [users, setUsers] = useState <UsersType[]>([
-    { name: 'Alice Smith', role: 'Admin', email: 'alice.smith@email.com', status: 'Active' },
-    { name: 'Bob Johnson', role: 'Editor', email: 'bob.johnson@email.com', status: 'Active' },
-    { name: 'Charlie Brown', role: 'Viewer', email: 'charlie.brown@email.com', status: 'Invited' },
-  ]);
+  const {isLoggedIn} = useLoginContext()
+const {id} = useActiveUserContext()
+  const [users, setUsers] = useState <UsersType[]>();
 useEffect(() => {
-  axios.get("http://localhost:8005/api/users/all", {
+  console.log(id, isLoggedIn)
+  axios.get(`http://localhost:8005/api/users/yours/${id}`, {
     headers:{
       Authorization:`Bearer ${localStorage.getItem("authToken")}`,
       "Content-Type": "application/json",
     }
   })
   .then((res) => {
-    alert(res.status)
-    console.log(res.status);
-    setUsers([...res.data, {...users}])
-    toast(res.status)
+    setUsers([...res.data])
 })
 .catch(error=> {
   console.log(error);
 }
 )
-
-
 }, [])
 
-
-
-  const handleDelete = (email:string) => {
-    setUsers(users.filter(user => user.email !== email));
+  const handleDelete = (id:number) => {
+    setUsers(users?.filter(user => user.id !== id));
+    axios.delete(`http://localhost:8005/api/users/delete/${id}`, {
+      headers:{
+        Authorization:`Bearer ${localStorage.getItem("authToken")}`,
+        "Content-Type": "application/json",
+      }
+    })
+    .then((res) => {
+    console.log("User Deleted successfully")
+    toast(`User with id ${id} Deleted successfully`)
+    })
+    .catch(err=>{ 
+      console.log(err.message)
+      toast.error("Failed to Delete the user")
+    })
   };
 
   const handleResendInvite = (email:string) => {
@@ -66,7 +74,7 @@ useEffect(() => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user, index) => (
+          {users && users.map((user, index) => (
             <tr key={index} className="border-b">
               <td className="p-4 text-gray-400">{user.name}</td>
               <td className="p-4">
@@ -82,21 +90,30 @@ useEffect(() => {
               </td>
               <td className="p-4 text-gray-400">{user.email}</td>
               <td className="p-4 text-gray-400">{user.status}</td>
-              <td className="p-4">
+              <td className="p-4 flex-1">
                 {user.status === 'Invited' ? (
                   <button
                     onClick={() => handleResendInvite(user.email)}
                     className="text-blue-500 hover:text-blue-700"
                   >
                     Resend Invite
+
                   </button>
                 ) : (
+                 <div className='flex flex-col lg:flex-row gap-2'>
+                   <button
+                    onClick={() => handleDelete(user.id)}
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    Update
+                  </button>
                   <button
-                    onClick={() => handleDelete(user.email)}
+                    onClick={() => handleDelete(user.id)}
                     className="text-red-500 hover:text-red-700"
                   >
                     Delete
                   </button>
+                 </div>
                 )}
               </td>
             </tr>
