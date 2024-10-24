@@ -1,38 +1,49 @@
 "use client";
-import React, { useEffect } from "react";
-import { getServerSession } from "next-auth";
 import Link from "next/link";
-import { useContext } from "react";
-import Session from "@/components/Session";
+import { useContext, useEffect, useState } from "react";
+import MySession from "@/components/Session";
 import { LoginContext } from "@/context";
-import { authOptions } from "../lib/auth";
-import { useState } from "react";
 import { useBillingContext } from "@/context";
+import { useLoginContext } from "@/context";
+import axios from "axios";
+import {toast, Toaster} from 'sonner'
 import { useRouter } from "next/navigation";
-export default  function Dashboard() {
-const router = useRouter()
-const { isLoggedIn, setLogin } = useContext(LoginContext);
-const [sessionData, setSessionData] = useState();
-  const {isEnabled} = useBillingContext()
-  const handleLogout = () => {
-    setLogin(false);
-    console.log("Logged out!");
-  };
+export default function Dashboard() {
+  const { isLoggedIn, setLogin } = useLoginContext();
+  const { isEnabled, setBilling } = useBillingContext();
 
-  if(sessionData) {
-    console.log(isEnabled, isLoggedIn)
-    console.log("Hello I have the sessioin data")
-  }
-
+  const router = useRouter();
+  const [activeUser, setActiveUser] = useState(0);
   useEffect(() => {
-    console.log("HEllo world", isLoggedIn)
-   async function getSession() {
-    const sessiondata = await getServerSession(authOptions)
-    console.log(sessiondata)
-   setSessionData(sessionData)
-   }
-   getSession()
-  }, [])
+const getUser = async() => {
+  const res = await axios.get(`http://localhost:8005/users/me`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Add the token here
+      "Content-Type": "application/json",
+    },
+  });
+  setActiveUser(res.data.id);
+}
+getUser();
+  }, []);
+  const token = localStorage.getItem("authToken")
+  if (activeUser != 0) {
+  
+    axios.get(`http://localhost:8005/billing/getBillingByAppId/${activeUser}`, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Add the token here
+        "Content-Type": "application/json",
+      },
+    })
+     .then(() => {
+      setBilling(true)
+     })
+     .catch(error => {
+      console.log(error)
+     
+  })
+    }
+  
 
   const loggedOutNav = [
     { href: "#", label: "Overview" },
@@ -56,6 +67,10 @@ const [sessionData, setSessionData] = useState();
     { href: "/analytics", label: "Analytics" },
   ];
 
+  const handleLogout = () => {
+    setLogin(false)
+  }
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
@@ -67,27 +82,29 @@ const [sessionData, setSessionData] = useState();
 
         {/* Navigation Links based on Login State */}
         <nav className="flex flex-col space-y-4 sticky top-24">
-          {(isLoggedIn && isEnabled ? loggedInNav : loggedOutNav).map((item) => (
-            <Link key={item.label} href={item.href} className="text-gray-600">
-              {item.label}
-            </Link>
-          ))}
+          {(isLoggedIn && isEnabled ? loggedInNav : loggedOutNav).map(
+            (item) => (
+              <Link key={item.label} href={item.href} className="text-gray-600">
+                {item.label}
+              </Link>
+            )
+          )}
         </nav>
 
         {/* Footer Options based on Login State */}
         <div className="mt-auto pt-10 sticky top-96">
           {isLoggedIn && isEnabled ? (
-         <div>
-       <Session/>
-         </div>
+            <div>
+              <MySession />
+            </div>
           ) : (
             <div>
-             <div>
-         <Session/>
-         </div>
-            <Link href="#" className="text-gray-600">
-              Create your Own Account
-            </Link>
+              <div>
+                <MySession />
+              </div>
+              <Link href="#" className="text-gray-600">
+                Create your Own Account
+              </Link>
             </div>
           )}
         </div>
@@ -97,14 +114,14 @@ const [sessionData, setSessionData] = useState();
       <main className="flex-1 p-10 bg-gray-50">
         <div className="flex justify-between items-center lg:px-20 mb-10">
           <h1 className="lg:text-3xl text-xl font-bold text-gray-400">
-            {isLoggedIn 
+            {isLoggedIn
               ? "You are logged in! Enjoy managing your products, viewing analytics, and more."
               : "Hello! Please log in to access your dashboard. 👋"}
           </h1>
 
           {/* Login / Logout Button */}
           <div>
-            {!isLoggedIn && !isEnabled ? (
+            {!isLoggedIn  ? (
               <div className="flex gap-4">
                 <Link
                   href="/login"
@@ -120,12 +137,28 @@ const [sessionData, setSessionData] = useState();
                 </Link>
               </div>
             ) : (
-              <button
-                onClick={() => router.push("/billing") }
+             <div>
+              { !isEnabled  ? (
+                <div>
+                  <button
+                onClick={() => router.push("/billing")}
                 className="bg-blue-500 px-8 py-2 rounded-md font-medium"
               >
                 Enable Billing Account
               </button>
+
+                </div>
+              ) : (
+                <div>
+                    <button
+                onClick={handleLogout}
+                className="bg-blue-500 px-8 py-2 rounded-md font-medium"
+              >
+                Logout
+              </button>
+                </div>
+              )}
+             </div>
             )}
           </div>
         </div>
@@ -311,7 +344,7 @@ const [sessionData, setSessionData] = useState();
           </div>
         )}
       </main>
+<Toaster/>
     </div>
   );
-};
-
+}

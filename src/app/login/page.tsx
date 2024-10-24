@@ -1,11 +1,11 @@
 "use client";
 import { toast, Toaster } from "sonner";
 import { useLoginContext } from "@/context";
-import { signIn } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
 import Link from "next/link";
-
+import { useBillingContext } from "@/context";
 import Image from "next/image";
 import google from "../../images/search.png";
 import github from "../../images/social.png";
@@ -13,6 +13,11 @@ import github from "../../images/social.png";
 import axios from "axios";
 
 const Login: React.FC = () => {
+  const { data: session, status } = useSession();
+
+  
+
+  const {isEnabled, setBilling} = useBillingContext()
   const {setLogin} = useLoginContext()
   const router = useRouter();
   const [formValues, setFormValues] = useState({
@@ -52,7 +57,6 @@ const Login: React.FC = () => {
   const loginWithGoogle = () =>{
     setLogin(true)
     signIn("google", { callbackUrl })
-   
   } 
   const loginwithGithub = () => {
     setLogin(true)

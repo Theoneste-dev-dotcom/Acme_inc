@@ -4,15 +4,20 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useBillingContext } from "@/context";
 import { Toaster, toast } from "sonner";
+import { useEffect } from "react";
 import { useLoginContext } from "@/context";
 const FullPageForm = () => {
+  const [activeUser, setActiveUser] = useState()
+  
   const router = useRouter();
   const [billingInfo, setBillingInfo] = useState({
+    address:"",
     state: "",
     city: "",
-    zip: "",
-    taxID: "",
+    zipcode: "",
+    taxIdNumber: "",
     discountCode: "",
+    app_id:0
   });
   const { isEnabled, setBilling } = useBillingContext();
   const { isLoggedIn } = useLoginContext();
@@ -30,17 +35,20 @@ const FullPageForm = () => {
   ) => {
     e.preventDefault();
     const token = localStorage.getItem("authToken")
-  
+    
     if (
+      billingInfo.address != "" &&
       billingInfo.state != "" &&
       billingInfo.city != "" &&
-      billingInfo.zip != "" &&
+      billingInfo.zipcode != "" &&
+      billingInfo.taxIdNumber != "" &&
       billingInfo.discountCode != ""
     ) {
+      console.log("billing Info:", billingInfo)
       //  http://localhost:8005/billing/add
-      const res = await axios.get(
-        `http://localhost:8005/users/me`,
-      
+      const res = await axios.post(
+        `http://localhost:8005/billing/add`,
+        billingInfo,      
         {
           headers: {
             Authorization: `Bearer ${token}`, // Add the token here
@@ -48,20 +56,44 @@ const FullPageForm = () => {
           },
         }
       );
+      console.log('isLogged in', isLoggedIn)
       if (res) {
+        console.log("isLogged in")
         console.log(res.data)
         console.log(isEnabled);
         setBilling(true);
         if (isLoggedIn) {
-          // router.push("/welcome");
+          toast.success("Billing is enabled on you account!! success")
+          router.push("/welcome");
         } else {
-          // router.push("/login");
+          router.push("/login");
         }
-        console.log(res.data, isEnabled);
       }
     }
 
   };
+
+  useEffect(()=>{
+    const getData = async() => {
+
+      const res = await axios.get(
+        `http://localhost:8005/users/me`,     
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Add the token here
+            "Content-Type": "application/json",
+          },
+        }
+      )
+
+      if(res) {
+        setActiveUser(res.data.id)
+        setBillingInfo({...billingInfo, app_id:res.data.id})
+        console.log(res.data)
+      }
+    }
+    getData();
+  }, [])
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -96,9 +128,9 @@ const FullPageForm = () => {
           <div>
             <input
               type="text"
-              name="addressLine1"
-              placeholder="Address line 1"
-              value="you address line"
+              name="address"
+              placeholder="Enter your organization address"
+              value={billingInfo.address}
               onChange={handleChange}
               className="w-full px-3 py-2 border text-gray-400 border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
             />
@@ -122,9 +154,9 @@ const FullPageForm = () => {
 
             <input
               type="text"
-              name="zip"
+              name="zipcode"
               placeholder="ZIP"
-              value={billingInfo.zip}
+              value={billingInfo.zipcode}
               onChange={handleChange}
               className="w-1/2 px-3 py-2 border text-gray-400 border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
             />
@@ -145,9 +177,9 @@ const FullPageForm = () => {
           <div>
             <input
               type="text"
-              name="taxID"
+              name="taxIdNumber"
               placeholder="Tax ID number (optional)"
-              value={billingInfo.taxID}
+              value={billingInfo.taxIdNumber}
               onChange={handleChange}
               className="w-full px-3 py-2 border text-gray-400 border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
             />
