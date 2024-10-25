@@ -15,20 +15,28 @@ export default function Dashboard() {
   const router = useRouter();
   const [activeUser, setActiveUser] = useState(0);
   useEffect(() => {
-const getUser = async() => {
-  const res = await axios.get(`http://localhost:8005/users/me`, {
+const getUser = () => {
+  console.log("the authtoken is",localStorage.getItem("authToken"))
+ axios.get(`http://localhost:8005/users/me`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("authToken")}`, // Add the token here
       "Content-Type": "application/json",
     },
-  });
-  setActiveUser(res.data.id);
+  })
+  .then(res=> {
+    console.log("The res data", res.data.id)
+    setActiveUser(res.data.id);
+  })
+  .catch(error=>{
+    console.log(error)
+  })
+ 
 }
 getUser();
   }, []);
   const token = localStorage.getItem("authToken")
   if (activeUser != 0) {
-  
+  console.log(activeUser)
     axios.get(`http://localhost:8005/billing/getBillingByAppId/${activeUser}`, {
       headers: {
         Authorization: `Bearer ${token}`, // Add the token here

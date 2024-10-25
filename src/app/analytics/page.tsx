@@ -5,11 +5,14 @@ import UsageChart from '@/components/analytics/ChatJs';
 import Metrics from '@/components/analytics/Metrics';
 import BillingSummary from '@/components/analytics/BillingSummary';
 import Recommendations from '@/components/analytics/Recomendation';
+import Header from '@/components/products/Header';
 
 
 const Dashboard = () => {
   return (
-    <div className="min-h-screen bg-gray-100 p-8 pl-40 ">
+    <div className=''>
+      <Header/>
+    <div className="min-h-screen bg-gray-100 p-8 px-40 ">
       <header className="mb-8">
         <h1 className="text-3xl font-bold text-gray-400 mb-2">Good evening, Chris</h1>
         <p className="text-gray-600">Here is your usage overview for this month.</p>
@@ -19,6 +22,7 @@ const Dashboard = () => {
       <Metrics />
       <BillingSummary />
       <Recommendations />
+    </div>
     </div>
   );
 };

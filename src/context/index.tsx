@@ -39,8 +39,9 @@ const AppWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [id, setId] =useState(0)
 
   useEffect(()=>{
-    const getData = async() => {
-      const res = await axios.get(
+    const getData = () => {
+      console.log("the toke pon index is ", localStorage.getItem("authToken"))
+     axios.get(
         `http://localhost:8005/users/me`,     
         {
           headers: {
@@ -49,13 +50,16 @@ const AppWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           },
         }
       )
-
-      if(res) {
-        console.log(res.data.id, "index")
-        setId(res.data.id)
-      } else {
-        console.log("no id got")
-      }
+      .then(res=> {
+        if(res) {
+          console.log(res.data.id, "index")
+          setId(res.data.id)
+        } else {
+          console.log("no id got")
+        }
+      }).catch(errr=> {
+        console.log(errr)
+      })     
     }
     getData();
   }, [])

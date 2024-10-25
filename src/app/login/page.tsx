@@ -45,6 +45,8 @@ const Login: React.FC = () => {
         localStorage.setItem('authToken', res.data.token)
         notify();
         router.push("/welcome");
+      }else {
+        console.log("failed to get the token")
       }
     }
   };
