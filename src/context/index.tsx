@@ -66,8 +66,7 @@ const AppWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 
   return (
-    <html>
-      <body>
+      <div>
         <LoginContext.Provider value={{ isLoggedIn, setLogin }}>
          <BillingContext.Provider value={{isEnabled, setBilling}}>
         <ActiveUserContext.Provider value={{id}}>
@@ -75,8 +74,7 @@ const AppWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </ActiveUserContext.Provider>
          </BillingContext.Provider>
         </LoginContext.Provider>
-      </body>
-    </html>
+      </div>
   );
 };
 

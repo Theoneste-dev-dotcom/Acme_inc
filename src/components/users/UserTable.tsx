@@ -13,6 +13,7 @@ interface UsersType  {
   status:string,
   permissions:string
 }
+
 const UsersTable = () => {
   const router = useRouter();
   const {isLoggedIn} = useLoginContext()
@@ -34,8 +35,7 @@ useEffect(() => {
 })
 .catch(error=> {
   console.log(error);
-}
-)
+})
 }, [])
 
   const handleDelete = (id:number) => {

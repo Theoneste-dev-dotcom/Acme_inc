@@ -13,7 +13,7 @@ const Signup: React.FC = () => {
     email: "",
     password: "",
   });
-  const [isChecked, setIsChecked] = useState(false);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (user.username != "" && user.password != "" && user.email != "") {
@@ -25,11 +25,9 @@ const Signup: React.FC = () => {
       if (res) {
         console.log(res);
         toast.success("App Created  Successfully");
-        if (isChecked) {
-          router.push("/billing");
-        } else {
+      
           router.push("/login");
-        }
+  
       } else {
         console.log("An error occured ");
       }
@@ -41,9 +39,7 @@ const Signup: React.FC = () => {
     setUser({ ...user, [name]: value }); // Update the form input values.
   };
 
-  const handleCheckboxChange = () => {
-    setIsChecked(!isChecked); // Toggle the state
-  };
+ 
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -108,17 +104,6 @@ const Signup: React.FC = () => {
             />
           </div>
 
-          <div>
-            <label className="text-gray-500">
-              {/* Step 3: Set the checkbox value based on state */}
-              <input
-                type="checkbox"
-                checked={isChecked}
-                onChange={handleCheckboxChange}
-              />
-              Enable Billing
-            </label>
-          </div>
 
           {/* Submit Button */}
           <div className="mb-4">

@@ -13,18 +13,17 @@ import github from "../../images/social.png";
 import axios from "axios";
 
 const Login: React.FC = () => {
+  const [isChecked, setIsChecked] = useState(false);
   const { data: session, status } = useSession();
 
-  
-
-  const {isEnabled, setBilling} = useBillingContext()
-  const {setLogin} = useLoginContext()
+  const { isEnabled, setBilling } = useBillingContext();
+  const { setLogin } = useLoginContext();
   const router = useRouter();
   const [formValues, setFormValues] = useState({
     email: "",
     password: "",
   });
-  
+
   const searchParams = useSearchParams();
   const callbackUrl = searchParams?.get("callbackUrl") || "/welcome";
   const notify = () => toast.success("Logged In  Successfully");
@@ -40,13 +39,17 @@ const Login: React.FC = () => {
         password: formValues.password,
       });
       if (res) {
-         setLogin(true)
+        setLogin(true);
         console.log(res.data);
-        localStorage.setItem('authToken', res.data.token)
+        localStorage.setItem("authToken", res.data.token);
         notify();
-        router.push("/welcome");
-      }else {
-        console.log("failed to get the token")
+        if (isChecked) {
+          router.push("/billing");
+        } else {
+          router.push("/welcome");
+        }
+      } else {
+        console.log("failed to get the token");
       }
     }
   };
@@ -56,16 +59,19 @@ const Login: React.FC = () => {
     setFormValues({ ...formValues, [name]: value }); // Update the form input values.
   };
 
-  const loginWithGoogle = () =>{
-    setLogin(true)
-    signIn("google", { callbackUrl })
-  } 
+  const loginWithGoogle = () => {
+    setLogin(true);
+    signIn("google", { callbackUrl });
+  };
   const loginwithGithub = () => {
-    setLogin(true)
-    signIn("github", { callbackUrl })
-  }
+    setLogin(true);
+    signIn("github", { callbackUrl });
+  };
   // Step 2: Handle the checkbox toggle event
 
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked); // Toggle the state
+  };
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
@@ -133,6 +139,17 @@ const Login: React.FC = () => {
             />
           </div>
 
+          <div>
+            <label className="text-gray-500">
+              {/* Step 3: Set the checkbox value based on state */}
+              <input
+                type="checkbox"
+                checked={isChecked}
+                onChange={handleCheckboxChange}
+              />
+              Enable Billing
+            </label>
+          </div>
           {/* Forgot Password */}
           <div className="text-right mb-6">
             <a href="#" className="text-blue-600 text-sm hover:underline">

@@ -8,7 +8,9 @@ import { useEffect } from "react";
 import { useLoginContext } from "@/context";
 const FullPageForm = () => {
   const [activeUser, setActiveUser] = useState()
+
   const router = useRouter();
+  
   const [billingInfo, setBillingInfo] = useState({
     address:"",
     state: "",

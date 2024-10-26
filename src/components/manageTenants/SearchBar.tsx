@@ -1,6 +1,6 @@
 const SearchBar = () => {
     return (
-      <div className="mb-6">
+      <div className="mb-6 px-40">
         <input
           type="text"
           placeholder="Search tenants"
