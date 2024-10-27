@@ -8,9 +8,11 @@ import { useActiveUserContext, useLoginContext } from "@/context";
 import axios from "axios";
 import { Toaster, toast } from "sonner";
 import defaultProfile from "../images/user.png";
+import ProfileImage from "./ProfileImage";
 
 export default function MySession() {
   const { id } = useActiveUserContext();
+
   const [currentUser, setCurrentUser] = useState({
     fullName: "",
     email: "",
@@ -21,14 +23,15 @@ export default function MySession() {
     fullName: "",
     email: "",
     password: "",
+    ownerId: id,
   });
   const [profileImage, setProfileImage] = useState<string | Blob>();
   const { data: session } = useSession();
   const router = useRouter();
   const { isLoggedIn, setLogin } = useLoginContext();
-
+  const [currentUserImage, setCurrentUserImage] = useState();
   useEffect(() => {
-    if (session) {
+    if (session || id) {
       setLogin(true);
     }
   }, [session, setLogin]);
@@ -41,14 +44,18 @@ export default function MySession() {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
           },
         });
-        setProfile({...response.data})
+        setProfile({ ...response.data });
         setCurrentUser(response.data);
         toast.success("User fetched successfully");
       } catch (error) {
         console.error("Error fetching user:", error);
       }
     };
-    fetchUser();
+    if (isLoggedIn) {
+      fetchUser();
+    } else {
+      toast.warning("You haven't logged in");
+    }
   }, []);
 
   const handleLogout = () => {
@@ -95,52 +102,54 @@ export default function MySession() {
 
   const updateYourProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     const formData = new FormData();
-    formData.append("appUser", new Blob([JSON.stringify(profile)], {type:"application/json"}));
+
     if (profileImage) {
       formData.append("imageFile", profileImage);
     }
-  
     try {
       formData.forEach((value, key) => {
-        console.log(key, value);  // Log each entry to check form data
+        console.log(key, value); // Log each entry to check form data
       });
-  
-      const response = await axios.put(
-        `http://localhost:8005/users/${id}`,
+
+      const res = await axios.put(
+        `http://localhost:8005/image/${id}/add`,
         formData,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-            "Content-Type": "multipart/form-data", // Explicitly set Content-Type
           },
         }
       );
-      
-      toast.success("Profile updated successfully");
-      console.log("Profile updated:", response.data);
+      if (res.status == 200) {
+        toast.success("Profile updated successfully");
+        setUpdate(false)
+        location.reload()
+      } else {
+        toast.error("Failed to update profile");
+      }
     } catch (error) {
-      console.error("Error updating profile:", error);
+      toast.error("An error occured while trying to update profile");
+      console.log(error);
     }
   };
-  
 
   return (
     <div className="flex items-start flex-col gap-2 space-x-4">
       <div className="flex items-center gap-4 mb-4">
-        <Image
-          src={defaultProfile}
-          className="rounded-full"
-          width={40}
-          height={40}
-          alt="User Profile Picture"
-        />
+
+        <ProfileImage id={id}/>
+
         <h1 className="text-blue-950 font-medium text-xl">
-          {currentUser?.fullName}
+         {isLoggedIn ? (
+          <h1>{currentUser?.fullName}</h1>
+         ) : (
+          <h1>Guest</h1>
+         )}
         </h1>
       </div>
-     
+
       {isLoggedIn ? (
         <div>
           <h1 className="text-gray-700 text-sm">

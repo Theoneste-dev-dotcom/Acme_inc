@@ -39,6 +39,7 @@ const Login: React.FC = () => {
         password: formValues.password,
       });
       if (res) {
+        toast.success("logged in successfully")
         setLogin(true);
         console.log(res.data);
         localStorage.setItem("authToken", res.data.token);
@@ -49,6 +50,7 @@ const Login: React.FC = () => {
           router.push("/welcome");
         }
       } else {
+        toast.error("Failed to log in")
         console.log("failed to get the token");
       }
     }

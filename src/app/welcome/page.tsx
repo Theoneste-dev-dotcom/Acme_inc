@@ -8,6 +8,7 @@ import { useLoginContext } from "@/context";
 import axios from "axios";
 import {toast, Toaster} from 'sonner'
 import { useRouter } from "next/navigation";
+import ProfileImage from "@/components/ProfileImage";
 export default function Dashboard() {
   const { isLoggedIn, setLogin } = useLoginContext();
   const { isEnabled, setBilling } = useBillingContext();
